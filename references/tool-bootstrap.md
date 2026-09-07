@@ -35,6 +35,21 @@ before editing any asset.
 - Prefer a portable, workspace-local tool directory when the user approves, rather
   than modifying global system configuration.
 
+## Redistribution Boundary
+
+Do not upload a tool copied from one user's computer unless its complete
+redistribution terms, source, version, and bundled dependencies are known. In
+particular, a permissively licensed executable can still be accompanied by a DLL
+with separate proprietary terms. Prefer an official upstream download and record
+the version and SHA-256 after installation.
+
+For Windows, this skill provides `scripts/bootstrap-retoc.ps1`. Its default mode is
+read-only detection. The `-InstallRetoc` mode downloads the official retoc v0.1.5
+release into a caller-selected workspace directory, then verifies that it launches.
+Running that mode is an explicit user-approved installation action; it must never be
+invoked silently by an agent. It does not download UnrealPak, Oodle DLLs, or tools
+with unknown redistribution rights.
+
 ## Fallbacks
 
 1. If extraction is unavailable, still collect screenshots, archive metadata, and

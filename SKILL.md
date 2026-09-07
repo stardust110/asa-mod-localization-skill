@@ -34,7 +34,7 @@ text renders in the game.
 ## Tool Readiness
 
 Before unpacking or building, read [tool-bootstrap.md](references/tool-bootstrap.md)
-and probe the local environment. Do not assume the user already owns an Unreal
+and [tool-sources.md](references/tool-sources.md), then probe the local environment. Do not assume the user already owns an Unreal
 package tool. Report the exact missing capability and a compatible tool category;
 ask for explicit permission before downloading, installing, updating, or changing
 system configuration. Never substitute a tool that changes the package format or

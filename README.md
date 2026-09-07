@@ -69,6 +69,8 @@ skill 会在用户选择的工作区中隔离 `source`、`inventory`、`translat
 
 没有解包器时，仍可整理截图、术语与翻译映射；但不会声称已完成覆盖审计或生成可安装补丁。没有封包器时，可完成翻译映射并标记构建受阻，待工具就绪后复用。
 
+仓库不上传从个人电脑复制来的二进制工具。Windows 用户可在确认后运行 `scripts/bootstrap-retoc.ps1 -InstallRetoc`，从 `retoc` 官方 v0.1.5 发布页下载到工作区；脚本默认只检测。UnrealPak、Oodle DLL 与授权不明的工具必须由用户从合法来源自行提供。
+
 ## English
 
 An open Agent Skills-format skill for ARK: Survival Ascended (ASA) mod localization. It packages mod text inventory, ASA terminology review, normal/bilingual baseline selection, package validation, and regression repair into a reusable workflow for any agent that supports `SKILL.md` folders.
@@ -137,12 +139,20 @@ Without an extractor, the agent can still organize screenshots, terminology, and
 translation maps, but it must not claim source coverage or an installable patch.
 Without a packer, it can complete the map and report a blocked build for later reuse.
 
+This repository does not redistribute binaries copied from a personal machine. After
+approval, Windows users may run `scripts/bootstrap-retoc.ps1 -InstallRetoc` to fetch
+retoc v0.1.5 from its official release into the workspace; the default script mode
+only detects tools. Users must provide UnrealPak, Oodle DLLs, and tools with unknown
+licenses from legitimate sources.
+
 ## Repository layout
 
 - `SKILL.md`: portable entry-point workflow and quality rules.
 - `references/portable-input-output.md`: input, output, workspace, and automation contract.
 - `references/release-checklist.md`: source, translation, package, and runtime follow-up checks.
 - `references/tool-bootstrap.md`: clean-machine capability checks and permission-aware tool setup.
+- `references/tool-sources.md`: official sources and redistribution boundaries.
+- `scripts/bootstrap-retoc.ps1`: optional, user-approved official retoc bootstrap for Windows.
 - `agents/openai.yaml`: optional OpenAI/Codex UI metadata; not required by other clients.
 
 ## License
