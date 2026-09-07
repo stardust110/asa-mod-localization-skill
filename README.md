@@ -71,6 +71,20 @@ skill 会在用户选择的工作区中隔离 `source`、`inventory`、`translat
 
 仓库不上传从个人电脑复制来的二进制工具。Windows 用户可在确认后运行 `scripts/bootstrap-retoc.ps1 -InstallRetoc`，从 `retoc` 官方 v0.1.5 发布页下载到工作区；脚本默认只检测。UnrealPak、Oodle DLL 与授权不明的工具必须由用户从合法来源自行提供。
 
+### 新电脑一键预检
+
+在开始翻译前运行以下命令：
+
+```powershell
+.\scripts\preflight.ps1 `
+  -ModSource 'D:\Mods\example-windows.zip' `
+  -NormalBaseline 'D:\ASA\official-normal' `
+  -BilingualBaseline 'D:\ASA\official-bilingual' `
+  -UnrealPak 'D:\UE\Engine\Binaries\Win64\UnrealPak.exe'
+```
+
+它会输出 JSON，分别标出“能否清点文本”“能否出普通版”“能否出双语版”，并列出唯一缺少的文件或工具。只提供模组包时也能得到准确的下一步，而不是模糊报错。
+
 ## English
 
 An open Agent Skills-format skill for ARK: Survival Ascended (ASA) mod localization. It packages mod text inventory, ASA terminology review, normal/bilingual baseline selection, package validation, and regression repair into a reusable workflow for any agent that supports `SKILL.md` folders.
@@ -145,6 +159,22 @@ retoc v0.1.5 from its official release into the workspace; the default script mo
 only detects tools. Users must provide UnrealPak, Oodle DLLs, and tools with unknown
 licenses from legitimate sources.
 
+### New-machine preflight
+
+Run this before translation:
+
+```powershell
+.\scripts\preflight.ps1 `
+  -ModSource 'D:\Mods\example-windows.zip' `
+  -NormalBaseline 'D:\ASA\official-normal' `
+  -BilingualBaseline 'D:\ASA\official-bilingual' `
+  -UnrealPak 'D:\UE\Engine\Binaries\Win64\UnrealPak.exe'
+```
+
+It emits JSON with separate inventory, normal-build, and bilingual-build readiness,
+plus an exact missing-input list. Supplying only a mod package still produces a clear
+next step instead of an ambiguous failure.
+
 ## Repository layout
 
 - `SKILL.md`: portable entry-point workflow and quality rules.
@@ -152,7 +182,9 @@ licenses from legitimate sources.
 - `references/release-checklist.md`: source, translation, package, and runtime follow-up checks.
 - `references/tool-bootstrap.md`: clean-machine capability checks and permission-aware tool setup.
 - `references/tool-sources.md`: official sources and redistribution boundaries.
+- `references/new-machine-quickstart.md`: minimum inputs and readiness outcomes for clean computers.
 - `scripts/bootstrap-retoc.ps1`: optional, user-approved official retoc bootstrap for Windows.
+- `scripts/preflight.ps1`: deterministic new-machine readiness report.
 - `agents/openai.yaml`: optional OpenAI/Codex UI metadata; not required by other clients.
 
 ## License

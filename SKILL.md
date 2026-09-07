@@ -40,6 +40,15 @@ ask for explicit permission before downloading, installing, updating, or changin
 system configuration. Never substitute a tool that changes the package format or
 claim a patch was built when extraction was unavailable.
 
+## New-Machine Preflight
+
+For a new machine, read [new-machine-quickstart.md](references/new-machine-quickstart.md)
+and run `scripts/preflight.ps1` before translating. The script reports three
+independent readiness states: source inventory, normal-package build, and bilingual
+package build. Do not collapse a blocked build into a generic failure: deliver the
+translation map and audit as intermediate artifacts when appropriate, and name the
+one missing input or capability that prevents the next stage.
+
 ## Terminology Is A Dependency
 
 Before translating ASA creatures, items, materials, mechanics, or UI, follow the
