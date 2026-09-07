@@ -30,12 +30,14 @@
 
 ## Packaging
 
-- Use official normal files for the normal archive and official bilingual files for
-  the bilingual archive. Hash the embedded `ShooterGame-Windows_P.pak` from each zip
-  and compare it with the intended official source.
-- Validate `ZipFile.testzip()` or equivalent CRC checks. Verify the root includes:
-  `ShooterGame-Windows_P.pak`, `.ucas`, `.utoc`, the current overlay pak, and an
-  installation readme.
+- For the default overlay-only archive, validate `ZipFile.testzip()` or equivalent
+  CRC checks. Verify the root includes the current overlay pak and an installation
+  readme that declares normal or bilingual base-package compatibility. Do not require
+  or embed the official package triplet.
+- For an optional fused archive, use official normal files for normal output and
+  official bilingual files for bilingual output. Hash the embedded
+  `ShooterGame-Windows_P.pak` from each zip and compare it with the intended official
+  source; also verify the `.pak`, `.ucas`, `.utoc`, overlay, and readme are present.
 - Generate `SHA256SUMS.txt` after final archive bytes are fixed.
 - Keep the package generic: archive names, workspace root, and destination folder
   must be configurable. Do not require a specific release host or account.
@@ -45,4 +47,6 @@
 - A package check cannot prove runtime coverage. If a player screenshot exposes an
   untranslated tooltip, add the exact source to the next patch, then expand the audit
   to its related item family and source variants.
-- Explain installation as mutually exclusive: normal or bilingual, never both.
+- Explain that a player selects one official base localization package (normal or
+  bilingual) and pairs the matching overlay with it; fused normal and bilingual
+  packages remain mutually exclusive.

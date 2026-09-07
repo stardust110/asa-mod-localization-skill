@@ -2,11 +2,13 @@
 
 ## Inputs
 
-Ask for only the materials needed for the requested variant:
+Ask for only the materials needed for the requested distribution mode:
 
 - A mod archive or an unpacked mod directory.
-- An official normal-language package triplet for normal output.
-- An official bilingual package triplet only when bilingual output is requested.
+- For the default overlay-only mode: the intended pairing, normal or bilingual
+  official localization. The official triplet itself is not an input.
+- For an optional fused package: the matching official normal-language or bilingual
+  package triplet to embed.
 - Any project terminology files, prior translation maps, screenshots, and prior
   patch archives that the user has available.
 
@@ -22,7 +24,7 @@ Use a user-selected workspace and keep these areas separate:
 - `source/`: immutable copies or unpacked source material.
 - `inventory/`: exact-source inventories and surface classifications.
 - `translations/`: translation maps, terminology overrides, and pending terms.
-- `build/`: generated normal and bilingual package roots.
+- `build/`: generated overlay and optional fused package roots.
 - `output/`: final archives, checksums, and installation notes.
 
 Never overwrite source archives or prior verified output. Rebuild a new output
@@ -30,19 +32,18 @@ directory when the mod or official baseline changes.
 
 ## Required Outputs
 
-For each requested variant, deliver:
+For every output, deliver:
 
-- One installable archive containing the correct official triplet and current
-  mod localization overlay.
+- One installable overlay archive containing the current mod localization overlay and
+  an installation note that declares normal or bilingual base-package compatibility.
 - `SHA256SUMS.txt` generated from the final archive bytes.
-- A short installation note stating that normal and bilingual variants are
-  mutually exclusive.
 - An audit summary: source count, translated player-facing count, excluded
   technical count, pending terminology count, and validation results.
 
-When bilingual output is not requested or a bilingual official baseline is not
-supplied, produce only the normal archive and say so in the audit summary. Never
-manufacture bilingual base-game localization from a mod-only overlay.
+For optional fused distribution, add the matching official triplet to a separate
+archive and hash-check it against its source. Do not embed an official triplet in an
+overlay-only archive. Never claim that a mod-only overlay manufactures bilingual
+base-game localization.
 
 ## Automation Rules
 
@@ -50,8 +51,9 @@ manufacture bilingual base-game localization from a mod-only overlay.
   mod updates can reuse the same map.
 - Apply terminology replacements with context rules, never broad global word
   substitution.
-- Keep automation configuration external to reusable code: source, baseline,
-  workspace, and output paths must be parameters.
+- Keep automation configuration external to reusable code: source, distribution mode,
+  base-package compatibility, optional baseline, workspace, and output paths must be
+  parameters.
 - Leave unknown proper names in English or mark them as pending. Automation may
   accelerate coverage but must not silently turn an unverified translation into a
   glossary standard.

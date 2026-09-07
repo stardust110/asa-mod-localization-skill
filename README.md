@@ -4,22 +4,23 @@
 
 ## 简体中文
 
-一个遵循开放 Agent Skills 格式的《方舟：生存飞升》（ARK: Survival Ascended，ASA）模组汉化 skill。它将模组文本清点、ASA 术语核对、普通版和双语版底包适配、打包校验与问题回归整理为可复用流程，供支持 `SKILL.md` 的 Agent 工具使用。
+一个遵循开放 Agent Skills 格式的《方舟：生存飞升》（ARK: Survival Ascended，ASA）模组汉化 skill。它将模组文本清点、ASA 术语核对、覆盖包或可选底包整合、打包校验与问题回归整理为可复用流程，供支持 `SKILL.md` 的 Agent 工具使用。
 
 ### 功能
 
 - 从模组压缩包或已解包目录清点玩家可见文本，并与更新包比较。
 - 根据项目提供的 ASA 术语表与上下文翻译生物、物品、印痕、描述、Buff、HUD 和书籍文本。
 - 修复截图中发现的漏译、中文英文混排、间距不一致、句子被拆分翻译等问题，并检查同类文本。
-- 分别构建普通汉化与双语汉化：普通版使用官方普通底包，双语版使用官方双语底包，避免原版内容缺少双语。
-- 校验 ZIP CRC、官方底包哈希、覆盖层、安装说明和 `SHA256SUMS.txt`。
+- 默认构建只含模组文本的覆盖包，不要求提供官方底包；玩家将其配合自己已安装的普通或双语官方汉化使用。
+- 可选构建自带官方底包的整合包：普通版使用官方普通底包，双语版使用官方双语底包，避免原版内容缺少双语。
+- 校验 ZIP CRC、覆盖层、安装说明和 `SHA256SUMS.txt`；整合包额外校验官方底包哈希。
 
 ### 适用范围与限制
 
 - 不依赖 GitHub、账号、固定盘符、游戏安装路径或特定模组作者。
 - 不会把压缩包结构校验当作游戏内显示完全正确的证明。
 - 不会将未经确认的专有名词直接固化为 ASA 标准译名。
-- 没有官方双语底包时，只会制作普通版，不会伪造原版双语文本。
+- 没有官方双语底包时，仍可制作与双语官方汉化配套的模组覆盖包；但不会伪造原版双语文本或制作自带双语底包的整合包。
 
 ### 安装
 
@@ -54,14 +55,15 @@ git clone https://github.com/stardust110/asa-mod-localization-skill `
 
 ### 使用
 
-按需求提供以下内容：
+默认覆盖包模式按需求提供以下内容：
 
 1. 模组压缩包或已解包目录。
-2. 普通版所需的官方普通底包三件套：`.pak`、`.ucas`、`.utoc`。
-3. 双语版所需的官方双语底包三件套。
-4. 可选：术语表、既有补丁、截图、历史翻译映射。
+2. 目标配套的官方普通或双语汉化说明；无需提供底包文件。
+3. 可选：术语表、既有补丁、截图、历史翻译映射。
 
-skill 会在用户选择的工作区中隔离 `source`、`inventory`、`translations`、`build` 和 `output`，输出安装包、校验文件、安装说明与审计摘要。普通版和双语版必须二选一安装。
+skill 会在用户选择的工作区中隔离 `source`、`inventory`、`translations`、`build` 和 `output`，输出覆盖包、校验文件、安装说明与审计摘要。覆盖包需与玩家已安装的普通或双语官方底包配套使用。
+
+只有需要交付一个自带原版汉化的独立整合包时，才选择整合包模式并提供对应官方三件套：普通整合包需要普通底包，双语整合包需要双语底包。两种整合包必须二选一安装。
 
 ### 没有解包工具时
 
@@ -78,31 +80,30 @@ skill 会在用户选择的工作区中隔离 `source`、`inventory`、`translat
 ```powershell
 .\scripts\preflight.ps1 `
   -ModSource 'D:\Mods\example-windows.zip' `
-  -NormalBaseline 'D:\ASA\official-normal' `
-  -BilingualBaseline 'D:\ASA\official-bilingual' `
   -UnrealPak 'D:\UE\Engine\Binaries\Win64\UnrealPak.exe'
 ```
 
-它会输出 JSON，分别标出“能否清点文本”“能否出普通版”“能否出双语版”，并列出唯一缺少的文件或工具。只提供模组包时也能得到准确的下一步，而不是模糊报错。
+它会输出 JSON，分别标出“能否清点文本”“能否出覆盖包”“能否出可选整合包”，并列出唯一缺少的文件或工具。只提供模组包时也能得到准确的下一步，而不是模糊报错。整合包预检使用 `-DistributionMode fused` 并传入对应的 `-NormalBaseline` 与可选 `-BilingualBaseline`。
 
 ## English
 
-An open Agent Skills-format skill for ARK: Survival Ascended (ASA) mod localization. It packages mod text inventory, ASA terminology review, normal/bilingual baseline selection, package validation, and regression repair into a reusable workflow for any agent that supports `SKILL.md` folders.
+An open Agent Skills-format skill for ARK: Survival Ascended (ASA) mod localization. It packages mod text inventory, ASA terminology review, overlay or optional fused-baseline packaging, validation, and regression repair into a reusable workflow for any agent that supports `SKILL.md` folders.
 
 ### Features
 
 - Inventories player-facing strings from archives or unpacked mods and compares updates.
 - Translates creatures, items, engrams, descriptions, buffs, HUD, and books using project-provided ASA terminology and context rules.
 - Repairs untranslated screenshots, mixed Chinese/English strings, inconsistent whitespace, and fragmented tooltip translations, then audits related text families.
-- Builds normal and bilingual variants independently from their matching official baseline triplets so base-game bilingual text is retained.
-- Validates ZIP CRCs, baseline hashes, localization overlays, install notes, and `SHA256SUMS.txt`.
+- Builds a mod-only localization overlay by default, with no official baseline files required.
+- Optionally builds fused normal and bilingual variants from their matching official baseline triplets so base-game bilingual text is retained.
+- Validates ZIP CRCs, localization overlays, install notes, and `SHA256SUMS.txt`; fused packages also validate baseline hashes.
 
 ### Scope and limits
 
 - Does not require GitHub, accounts, fixed paths, a game installation location, or a particular mod author.
 - Does not treat archive validation as proof of complete in-game rendering.
 - Does not turn unverified proper names into ASA standard terminology.
-- Does not fabricate bilingual base-game text without an official bilingual baseline.
+- Does not fabricate bilingual base-game text without an official bilingual baseline; a bilingual-compatible overlay still needs the player's official bilingual base package.
 
 ### Install
 
@@ -137,9 +138,9 @@ git clone https://github.com/stardust110/asa-mod-localization-skill `
 
 ### Inputs and outputs
 
-Provide the mod archive or unpacked directory, the official normal baseline triplet, the bilingual baseline triplet when bilingual output is required, plus optional terminology, previous patches, screenshots, or translation maps. The skill keeps source, inventory, translation, build, and output areas separate and produces requested installable archives, checksums, an installation note, and an audit summary.
+For the default overlay-only mode, provide the mod archive or unpacked directory and state whether it will be paired with normal or bilingual official localization; the official triplet files are not needed. Provide matching official baseline triplets only for optional fused packages. Add optional terminology, previous patches, screenshots, or translation maps as available. The skill keeps source, inventory, translation, build, and output areas separate and produces requested installable archives, checksums, an installation note, and an audit summary.
 
-Normal and bilingual packages are mutually exclusive installs.
+The player pairs an overlay with one installed official base package. Fused normal and bilingual packages are mutually exclusive installs.
 
 ### When tools are missing
 
@@ -166,14 +167,14 @@ Run this before translation:
 ```powershell
 .\scripts\preflight.ps1 `
   -ModSource 'D:\Mods\example-windows.zip' `
-  -NormalBaseline 'D:\ASA\official-normal' `
-  -BilingualBaseline 'D:\ASA\official-bilingual' `
   -UnrealPak 'D:\UE\Engine\Binaries\Win64\UnrealPak.exe'
 ```
 
-It emits JSON with separate inventory, normal-build, and bilingual-build readiness,
-plus an exact missing-input list. Supplying only a mod package still produces a clear
-next step instead of an ambiguous failure.
+It emits JSON with separate inventory, overlay-build, and optional fused-build
+readiness, plus an exact missing-input list. Supplying only a mod package still
+produces a clear next step instead of an ambiguous failure. For fused output, add
+`-DistributionMode fused` with the matching `-NormalBaseline` and optional
+`-BilingualBaseline`.
 
 ## Repository layout
 

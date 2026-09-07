@@ -2,6 +2,10 @@
 param(
     [Parameter(Mandatory)]
     [string]$ModSource,
+    [ValidateSet('overlay', 'fused')]
+    [string]$DistributionMode = 'overlay',
+    [ValidateSet('normal', 'bilingual')]
+    [string]$OverlayTarget = 'normal',
     [string]$NormalBaseline,
     [string]$BilingualBaseline,
     [string]$UnrealPak,
@@ -80,35 +84,40 @@ $retocProbe = Test-ToolLaunch -Path $retoc -Arguments @('--version')
 $unrealPakProbe = Test-ToolLaunch -Path $unrealPak -Arguments @('-help')
 $sourceExists = Test-Path -LiteralPath $ModSource
 $sourceIsDirectory = $sourceExists -and (Test-Path -LiteralPath $ModSource -PathType Container)
-$normal = Test-OfficialTriplet -Path $NormalBaseline
-$bilingualRequested = -not [string]::IsNullOrWhiteSpace($BilingualBaseline)
+$fusedRequested = $DistributionMode -eq 'fused'
+$normalRequested = $fusedRequested
+$bilingualRequested = $fusedRequested -and -not [string]::IsNullOrWhiteSpace($BilingualBaseline)
+$normal = if ($normalRequested) { Test-OfficialTriplet -Path $NormalBaseline } else { [pscustomobject]@{ provided = $false; ready = $true; type = 'not-required-for-overlay'; missing = @() } }
 $bilingual = if ($bilingualRequested) { Test-OfficialTriplet -Path $BilingualBaseline } else { [pscustomobject]@{ provided = $false; ready = $true; type = 'not-requested'; missing = @() } }
 
 $missing = [System.Collections.Generic.List[string]]::new()
 if (-not $sourceExists) { $missing.Add("Mod source not found: $ModSource") }
 if ($sourceExists -and -not $sourceIsDirectory -and -not $retocProbe.launched) { $missing.Add('Packed mod source requires a compatible IoStore extractor such as retoc.') }
-if (-not $normal.ready) { $missing.Add('Normal official baseline triplet is missing or incomplete.') }
 if (-not $unrealPakProbe.launched) { $missing.Add('Compatible UnrealPak executable is missing or cannot launch for package build.') }
+if ($normalRequested -and -not $normal.ready) { $missing.Add('Normal official baseline triplet is missing or incomplete for fused output.') }
 if ($bilingualRequested -and -not $bilingual.ready) { $missing.Add('Bilingual official baseline triplet is missing or incomplete.') }
 
 $inventoryReady = $sourceExists -and ($sourceIsDirectory -or $retocProbe.launched)
-$normalBuildReady = $inventoryReady -and $normal.ready -and $unrealPakProbe.launched
-$bilingualBuildReady = $normalBuildReady -and $bilingual.ready
+$overlayBuildReady = $inventoryReady -and $unrealPakProbe.launched
+$normalFusedBuildReady = $fusedRequested -and $overlayBuildReady -and $normal.ready
+$bilingualFusedBuildReady = $bilingualRequested -and $normalFusedBuildReady -and $bilingual.ready
 
 $result = [ordered]@{
     workspace = $Workspace
+    distribution = [ordered]@{ mode = $DistributionMode; overlayTarget = $OverlayTarget }
     source = [ordered]@{ path = $ModSource; exists = $sourceExists; type = if ($sourceIsDirectory) { 'unpacked-directory' } elseif ($sourceExists) { 'packed-file' } else { 'missing' } }
     tools = [ordered]@{ retoc = $retocProbe; unrealPak = $unrealPakProbe; sha256 = [bool](Get-Command Get-FileHash -ErrorAction SilentlyContinue) }
     normalBaseline = $normal
     bilingualBaseline = $bilingual
     inventory = [ordered]@{ ready = $inventoryReady }
-    normalBuild = [ordered]@{ ready = $normalBuildReady }
-    bilingualBuild = [ordered]@{ requested = $bilingualRequested; ready = $bilingualBuildReady }
+    overlayBuild = [ordered]@{ ready = $overlayBuildReady }
+    normalFusedBuild = [ordered]@{ requested = $fusedRequested; ready = $normalFusedBuildReady }
+    bilingualFusedBuild = [ordered]@{ requested = $bilingualRequested; ready = $bilingualFusedBuildReady }
     missing = @($missing)
 }
 
 $result | ConvertTo-Json -Depth 6
-if ($normalBuildReady -and (-not $bilingualRequested -or $bilingualBuildReady)) {
+if ($overlayBuildReady -and (-not $fusedRequested -or ($normalFusedBuildReady -and (-not $bilingualRequested -or $bilingualFusedBuildReady)))) {
     exit 0
 }
 exit 2

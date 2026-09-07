@@ -1,15 +1,16 @@
 ---
 name: asa-mod-localization-release
-description: "Create and validate reusable ARK: Survival Ascended mod localization patches, including separate official normal and bilingual baselines. Use for ASA mod archive localization, coverage repair, and local release packaging; not for ordinary game translation questions."
+description: "Create and validate reusable ARK: Survival Ascended mod localization overlays, with optional fused normal and bilingual baseline packages. Use for ASA mod archive localization, coverage repair, and local release packaging; not for ordinary game translation questions."
 ---
 
 # ASA Mod Localization Release
 
 Create a usable, portable ASA mod localization package. This standard `SKILL.md`
 folder is designed for skills-compatible agents; optional client metadata must not
-be required for the workflow. The default deliverable is a
-local pair of verified normal and bilingual archives plus checksums; publishing them
-to a hosting service is outside this skill. Treat package inspection and in-game
+be required for the workflow. The default deliverable is a verified mod localization
+overlay archive plus a checksum; fused packages that include an official base-game
+baseline are optional. Publishing them to a hosting service is outside this skill.
+Treat package inspection and in-game
 evidence as different things: a structurally valid archive is not proof that every
 text renders in the game.
 
@@ -43,9 +44,9 @@ claim a patch was built when extraction was unavailable.
 ## New-Machine Preflight
 
 For a new machine, read [new-machine-quickstart.md](references/new-machine-quickstart.md)
-and run `scripts/preflight.ps1` before translating. The script reports three
-independent readiness states: source inventory, normal-package build, and bilingual
-package build. Do not collapse a blocked build into a generic failure: deliver the
+and run `scripts/preflight.ps1` before translating. The script reports independent
+readiness states for source inventory, overlay build, and any requested fused package
+builds. Do not collapse a blocked build into a generic failure: deliver the
 translation map and audit as intermediate artifacts when appropriate, and name the
 one missing input or capability that prevents the next stage.
 
@@ -57,22 +58,34 @@ confirmed ASA terminology over literal English translation. New confirmed terms 
 an English source, Chinese translation, category, evidence, and scope rule; unknown
 proper names remain English or `中文（English）` until verified.
 
-## Build Two Deliberate Variants
+## Choose The Distribution Mode
 
-- Normal mod localization must copy the official *normal* package triplet
-  (`ShooterGame-Windows_P.pak`, `.ucas`, `.utoc`).
-- Bilingual mod localization must separately copy the official *bilingual* triplet.
-  Never build both variants from the same official `.pak` or expect a mod-only
-  overlay to make base-game names bilingual.
-- Keep a single mod localization overlay pak. Do not package obsolete duplicate
-  overlay names.
-- Build archives in the workspace first. External distribution folders can reject or
-  truncate writes; copy only a verified final artifact out afterward.
+### Overlay-only (default)
+
+- Build and distribute only the current mod localization overlay pak, installation
+  note, and checksum. An official base-game package triplet is **not required**.
+- The player installs the overlay beside the official normal or bilingual localization
+  package they already use. Selecting a bilingual-compatible overlay does not create
+  bilingual base-game text; that text still comes from the official bilingual package.
+- Keep a single current overlay pak. Do not include obsolete duplicate overlay names.
+
+### Fused package (optional)
+
+- Use this only when distributing one self-contained archive that also carries the
+  base-game localization package.
+- A normal fused package must copy the official *normal* triplet
+  (`ShooterGame-Windows_P.pak`, `.ucas`, `.utoc`). A bilingual fused package must
+  separately copy the official *bilingual* triplet.
+- Never build both fused variants from the same official `.pak`, or claim a mod-only
+  overlay adds bilingual names to base-game content.
+
+Build archives in the workspace first. External distribution folders can reject or
+truncate writes; copy only a verified final artifact out afterward.
 
 ## Portable Workflow
 
-- Accept a mod archive or unpacked mod directory, a normal official baseline, and,
-  when bilingual output is requested, a bilingual official baseline.
+- Accept a mod archive or unpacked mod directory for overlay-only output. Require an
+  official normal or bilingual baseline only for the matching optional fused output.
 - Keep generated inventories, translation maps, audit reports, and output archives
   under a user-selected workspace. Do not depend on a particular drive letter,
   GitHub repository, mod author, or prior release script.
@@ -92,8 +105,9 @@ Do not call the task complete until all applicable checks pass:
 1. Source-to-translation audit reports no unresolved player-facing strings in scope.
 2. Mixed-English and Chinese-spacing checks pass, except explicitly approved proper
    names or model identifiers.
-3. Each zip passes CRC/integrity testing and contains the expected official triplet,
-   localization overlay, and installation readme.
-4. The normal and bilingual archives contain the respective, distinct official `.pak`
-   hashes.
+3. Each overlay-only zip passes CRC/integrity testing and contains the current
+   localization overlay plus an installation readme that states its base-package
+   compatibility.
+4. Each fused zip additionally contains the expected official triplet; normal and
+   bilingual fused archives use their respective, distinct official `.pak` hashes.
 5. A SHA256 manifest covers the final archives.
