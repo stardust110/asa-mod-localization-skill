@@ -24,6 +24,29 @@ Use project-provided tools before recommending a download. Verify tool versions
 against the supplied package format with a harmless inventory or listing operation
 before editing any asset.
 
+## PAK Writer Compatibility
+
+Reading a PAK and writing an installable ASA PAK are separate checks. A newer
+UnrealPak can successfully create an archive whose PAK version is newer than the
+game client accepts. Never infer compatibility from the tool's Unreal Engine label
+or from ZIP integrity alone.
+
+Before publishing an overlay:
+
+1. Use the chosen UnrealPak to list or test a known-good ASA overlay or client PAK.
+2. Build the overlay using an explicit response file and inspect the build log: it
+   must add the expected files, not zero files.
+3. Use the same target-compatible UnrealPak to run `-List` or `-Test` on the newly
+   built PAK. Confirm its mount point and each required locres path.
+4. Extract or otherwise read back the resulting locres and spot-check representative
+   base-game and mod entries before making a fused package.
+
+`Invalid pak file version (...)` from the game or a target-compatible UnrealPak is
+a hard failure. Keep the translation assets, discard the generated PAK from the
+release candidate, and rebuild with a compatible packer. Do not try to repair this
+by changing translation text, renaming the PAK, or bundling extra `.ucas` / `.utoc`
+files for the overlay.
+
 ## Permission Boundary
 
 - Detection, version reporting, and read-only inspection may run immediately.

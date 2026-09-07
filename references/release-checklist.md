@@ -30,6 +30,17 @@
 
 ## Packaging
 
+- Select the UnrealPak by target-client compatibility, not by its engine version or
+  newest timestamp. A packer can generate a PAK version the ASA client rejects.
+- Build overlays through an explicit response file and inspect the log for the
+  expected nonzero file count. An empty PAK is a failed build even if its ZIP passes
+  CRC validation.
+- Before zipping, use a target-compatible UnrealPak to `-List` or `-Test` each new
+  overlay. Confirm the expected mount point and all required `Localization/.../*.locres`
+  entries. Extract and parse a final locres for representative original-game and mod
+  strings when the package includes merged base localization.
+- If the game reports `Invalid pak file version (...)`, withdraw that candidate and
+  rebuild its overlay with a compatible UnrealPak; do not publish a text-only fix.
 - For the default overlay-only archive, validate `ZipFile.testzip()` or equivalent
   CRC checks. Verify the root includes the current overlay pak and an installation
   readme that declares normal or bilingual base-package compatibility. Do not require

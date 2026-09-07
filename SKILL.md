@@ -82,6 +82,19 @@ proper names remain English or `中文（English）` until verified.
 Build archives in the workspace first. External distribution folders can reject or
 truncate writes; copy only a verified final artifact out afterward.
 
+### PAK Format Compatibility Is A Release Gate
+
+- A newer UnrealPak is not automatically compatible with the player's ASA client.
+  The packer version may write a newer PAK format even when the files and mount
+  paths are otherwise correct.
+- Select a packer by proving that it can read a known-good ASA overlay or client
+  PAK. After building, use that same target-compatible reader to run `-List` or
+  `-Test` on the new overlay and confirm the intended locres entries are present.
+- Treat a game error such as `Invalid pak file version (12)` as a packaging-format
+  failure, not a text, locres, or translation defect. Do not publish that PAK;
+  rebuild from the identical response file with a compatible UnrealPak, then repeat
+  archive and locres readback checks.
+
 ## Portable Workflow
 
 - Accept a mod archive or unpacked mod directory for overlay-only output. Require an
@@ -110,4 +123,6 @@ Do not call the task complete until all applicable checks pass:
    compatibility.
 4. Each fused zip additionally contains the expected official triplet; normal and
    bilingual fused archives use their respective, distinct official `.pak` hashes.
-5. A SHA256 manifest covers the final archives.
+5. Every produced overlay PAK passes a `-List` or `-Test` readback with an
+   ASA-client-compatible UnrealPak and contains the expected localization paths.
+6. A SHA256 manifest covers the final archives.
