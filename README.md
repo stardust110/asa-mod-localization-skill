@@ -63,6 +63,12 @@ git clone https://github.com/stardust110/asa-mod-localization-skill `
 
 skill 会在用户选择的工作区中隔离 `source`、`inventory`、`translations`、`build` 和 `output`，输出安装包、校验文件、安装说明与审计摘要。普通版和双语版必须二选一安装。
 
+### 没有解包工具时
+
+不需要预先安装全部工具。skill 会先检测 ZIP 校验、Unreal IoStore 解包、locres 转换、封包和 SHA-256 哈希能力；缺少时会说明缺失的具体能力与兼容工具类别。下载、安装、更新工具或修改 PATH 前必须征得用户同意，并优先使用工作区内的便携式工具。
+
+没有解包器时，仍可整理截图、术语与翻译映射；但不会声称已完成覆盖审计或生成可安装补丁。没有封包器时，可完成翻译映射并标记构建受阻，待工具就绪后复用。
+
 ## English
 
 An open Agent Skills-format skill for ARK: Survival Ascended (ASA) mod localization. It packages mod text inventory, ASA terminology review, normal/bilingual baseline selection, package validation, and regression repair into a reusable workflow for any agent that supports `SKILL.md` folders.
@@ -119,11 +125,24 @@ Provide the mod archive or unpacked directory, the official normal baseline trip
 
 Normal and bilingual packages are mutually exclusive installs.
 
+### When tools are missing
+
+The skill first probes for ZIP validation, Unreal IoStore extraction, locres
+conversion, package building, and SHA-256 hashing. When a capability is missing, it
+reports the exact gap and a compatible tool category. Downloads, installations,
+updates, and PATH changes always require user approval; approved tools should
+prefer a portable workspace-local location.
+
+Without an extractor, the agent can still organize screenshots, terminology, and
+translation maps, but it must not claim source coverage or an installable patch.
+Without a packer, it can complete the map and report a blocked build for later reuse.
+
 ## Repository layout
 
 - `SKILL.md`: portable entry-point workflow and quality rules.
 - `references/portable-input-output.md`: input, output, workspace, and automation contract.
 - `references/release-checklist.md`: source, translation, package, and runtime follow-up checks.
+- `references/tool-bootstrap.md`: clean-machine capability checks and permission-aware tool setup.
 - `agents/openai.yaml`: optional OpenAI/Codex UI metadata; not required by other clients.
 
 ## License

@@ -31,6 +31,15 @@ text renders in the game.
   text including punctuation, RichColor tags, spaces, and line endings. Do not assume
   that translating a short fragment will match Unreal's localization key.
 
+## Tool Readiness
+
+Before unpacking or building, read [tool-bootstrap.md](references/tool-bootstrap.md)
+and probe the local environment. Do not assume the user already owns an Unreal
+package tool. Report the exact missing capability and a compatible tool category;
+ask for explicit permission before downloading, installing, updating, or changing
+system configuration. Never substitute a tool that changes the package format or
+claim a patch was built when extraction was unavailable.
+
 ## Terminology Is A Dependency
 
 Before translating ASA creatures, items, materials, mechanics, or UI, follow the
