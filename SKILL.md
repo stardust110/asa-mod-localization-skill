@@ -79,6 +79,24 @@ proper names remain English or `中文（English）` until verified.
 - Never build both fused variants from the same official `.pak`, or claim a mod-only
   overlay adds bilingual names to base-game content.
 
+### Variant Isolation Is Mandatory
+
+- Treat normal Chinese and bilingual output as independent products, not two flags
+  passed through one mutable shared build tree. Each variant needs an immutable
+  baseline, isolated work/output directories, and a separate manifest with its own
+  hashes.
+- A bilingual experiment must never replace, repack, fuse assets into, or otherwise
+  alter a normal-Chinese payload unless normal mode has separately passed its
+  in-game regression test. A structurally valid bilingual container is not evidence
+  that the normal package still works.
+- When a prior normal package is game-proven and a newer normal package regresses,
+  preserve the proven overlay bytes as the recovery baseline. Compare mount point,
+  every `Localization/.../*.locres` path, and official triplet hashes before adding
+  new coverage.
+- Preserve every observed fallback entry required by the working baseline. Do not
+  reduce `zh / zh-Hans / ja / de` buckets to only `zh / zh-Hans` merely because the
+  UI language appears Chinese; ASA mod text can resolve through a fallback bucket.
+
 Build archives in the workspace first. External distribution folders can reject or
 truncate writes; copy only a verified final artifact out afterward.
 
@@ -126,3 +144,6 @@ Do not call the task complete until all applicable checks pass:
 5. Every produced overlay PAK passes a `-List` or `-Test` readback with an
    ASA-client-compatible UnrealPak and contains the expected localization paths.
 6. A SHA256 manifest covers the final archives.
+7. Normal and bilingual artifacts have separate baseline hashes, isolated output
+   paths, and their own in-game evidence. Publishing one must not overwrite or
+   silently supersede the other.

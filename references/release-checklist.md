@@ -30,6 +30,16 @@
 
 ## Packaging
 
+- Keep normal Chinese and bilingual variants in separate immutable baseline folders
+  and separate output folders. Record the baseline and final hashes for each before
+  release; never rebuild the normal package as a side effect of a bilingual fix.
+- Compare a candidate with the last game-proven package before release: mount point,
+  all `Localization/.../*.locres` paths, language fallback buckets, overlay file
+  count, and official triplet hashes. Retain all working fallback buckets such as
+  `zh / zh-Hans / ja / de` unless in-game evidence proves they are unnecessary.
+- Require a normal-mode game screenshot or equivalent player confirmation before a
+  normal payload replaces a game-proven normal baseline. Container/ZIP validation
+  alone cannot authorize that replacement.
 - Select the UnrealPak by target-client compatibility, not by its engine version or
   newest timestamp. A packer can generate a PAK version the ASA client rejects.
 - Build overlays through an explicit response file and inspect the log for the
