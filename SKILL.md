@@ -102,6 +102,9 @@ proper names remain English or `中文（English）` until verified.
 - Preserve every observed fallback entry required by the working baseline. Do not
   reduce `zh / zh-Hans / ja / de` buckets to only `zh / zh-Hans` merely because the
   UI language appears Chinese; ASA mod text can resolve through a fallback bucket.
+- For a bilingual release, read [bilingual-release-gate.md](references/bilingual-release-gate.md).
+  It requires separate proof for original-game bilingual text and mod bilingual text;
+  passing either surface does not prove the other.
 
 Build archives in the workspace first. External distribution folders can reject or
 truncate writes; copy only a verified final artifact out afterward.
@@ -156,3 +159,6 @@ Do not call the task complete until all applicable checks pass:
 8. For a regression that has a known-good baseline, the release audit includes the
    baseline-versus-candidate PAK layout comparison and its classification. Do not
    publish an asset-container workaround for a LocRes routing failure, or vice versa.
+9. A bilingual release includes a completed two-surface runtime matrix: at least one
+   original-game display and one mod display. Both must show the expected Chinese
+   plus English behavior before the candidate becomes a release.

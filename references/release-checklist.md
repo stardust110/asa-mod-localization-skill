@@ -43,6 +43,10 @@
 - When a known-good package exists, run `scripts/compare-pak-layout.ps1` against the
   candidate and save its JSON audit. A language-path deletion is a release blocker;
   restore the proven path before changing translation mappings or asset containers.
+- For a bilingual release, complete
+  [bilingual-release-gate.md](bilingual-release-gate.md). Record one original-game
+  and one mod screenshot against explicit expected display text; neither screenshot
+  can stand in for the other.
 - Select the UnrealPak by target-client compatibility, not by its engine version or
   newest timestamp. A packer can generate a PAK version the ASA client rejects.
 - Build overlays through an explicit response file and inspect the log for the

@@ -15,6 +15,7 @@
 - 可选构建自带官方底包的整合包：普通版使用官方普通底包，双语版使用官方双语底包，避免原版内容缺少双语。
 - 校验 ZIP CRC、覆盖层、安装说明和 `SHA256SUMS.txt`；整合包额外校验官方底包哈希。
 - 对有已验证旧版的回归问题，自动对比 PAK 挂载点和全部 LocRes 路径，区分语言回退、格式兼容、资产挂载与词条键不匹配四类问题。
+- 双语发布必须分别验证原版双语与模组双语：完整双语词库和模组语言回退路径是两条独立运行路线，任一单独成功都不能代替另一项验收。
 
 ### 适用范围与限制
 
@@ -106,6 +107,7 @@ An open Agent Skills-format skill for ARK: Survival Ascended (ASA) mod localizat
 - Does not turn unverified proper names into ASA standard terminology.
 - Does not fabricate bilingual base-game text without an official bilingual baseline; a bilingual-compatible overlay still needs the player's official bilingual base package.
 - For a regression with a game-proven earlier package, compares PAK mount points and LocRes paths to distinguish language routing, PAK format, asset mounting, and source-key mismatches.
+- Requires separate original-game and mod runtime evidence for bilingual releases; a complete bilingual dictionary and a mod fallback layout are independent runtime routes.
 
 ### Install
 
