@@ -40,6 +40,9 @@
 - Require a normal-mode game screenshot or equivalent player confirmation before a
   normal payload replaces a game-proven normal baseline. Container/ZIP validation
   alone cannot authorize that replacement.
+- When a known-good package exists, run `scripts/compare-pak-layout.ps1` against the
+  candidate and save its JSON audit. A language-path deletion is a release blocker;
+  restore the proven path before changing translation mappings or asset containers.
 - Select the UnrealPak by target-client compatibility, not by its engine version or
   newest timestamp. A packer can generate a PAK version the ASA client rejects.
 - Build overlays through an explicit response file and inspect the log for the
@@ -68,6 +71,10 @@
 - A package check cannot prove runtime coverage. If a player screenshot exposes an
   untranslated tooltip, add the exact source to the next patch, then expand the audit
   to its related item family and source variants.
+- Classify every screenshot/report using
+  [runtime-regression-triage.md](runtime-regression-triage.md) before selecting a
+  repair. Record the evidence, selected route, rejected routes, and the game-runtime
+  result in the release audit.
 - Explain that a player selects one official base localization package (normal or
   bilingual) and pairs the matching overlay with it; fused normal and bilingual
   packages remain mutually exclusive.

@@ -31,6 +31,12 @@ text renders in the game.
 - A screenshot showing English is a concrete regression: locate its complete source
   text including punctuation, RichColor tags, spaces, and line endings. Do not assume
   that translating a short fragment will match Unreal's localization key.
+- When a working patch and a regressed candidate both exist, read
+  [runtime-regression-triage.md](references/runtime-regression-triage.md) before
+  changing translations. Run `scripts/compare-pak-layout.ps1` with a
+  target-compatible UnrealPak to compare their mount points and LocRes paths.
+  A missing path is a packaging regression, not evidence that the translation text
+  needs to be rewritten.
 
 ## Tool Readiness
 
@@ -147,3 +153,6 @@ Do not call the task complete until all applicable checks pass:
 7. Normal and bilingual artifacts have separate baseline hashes, isolated output
    paths, and their own in-game evidence. Publishing one must not overwrite or
    silently supersede the other.
+8. For a regression that has a known-good baseline, the release audit includes the
+   baseline-versus-candidate PAK layout comparison and its classification. Do not
+   publish an asset-container workaround for a LocRes routing failure, or vice versa.
