@@ -48,6 +48,13 @@ candidate for new coverage.
 **Do not:** compress the paths to only `zh`/`zh-Hans`, replace the normal package
 while debugging bilingual behavior, or use an asset-container experiment as a fix.
 
+**Verified bilingual composition:** when an earlier full bilingual dictionary proves
+original-game bilingual rendering but lacks mod fallback routing, use that complete
+dictionary as content for `Game` and `ShooterGame`, then reproduce the game-proven
+`zh / zh-Hans / ja / de` fallback layout. Validate original-game and mod screenshots
+separately. This is a composition of two proven properties, not an asset-container
+merge.
+
 ### 3. Direct asset text is not mounted
 
 **Evidence:** the final LocRes contains the expected key, but player-facing direct
