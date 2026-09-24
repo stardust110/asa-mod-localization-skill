@@ -13,6 +13,8 @@
   ASA glossary first; if it is not confirmed, retain English or use `中文（English）`
   and record it as pending instead of inventing a standard term.
 - Preserve pre-existing confirmed translations unless source text changed.
+- Confirm the requested mod list against each archive's `.uplugin` identity and ID;
+  a missing mod is a coverage failure even when every listed CSV was translated.
 - Compare update archives with the previous package when available. Focus translation
   review on new or changed player-facing strings rather than raw string volume.
 - For screenshots, retain the complete source string. Unreal `FText` keys can change
@@ -27,6 +29,10 @@
   required. Add both CRLF and LF keys only when the source exists in both forms.
 - Put bilingual formatting only on display-name/item-name sources. Descriptions stay
   natural Chinese unless the user explicitly asks for bilingual descriptions.
+- Audit exact-source conflicts across all mod CSVs separately for normal and
+  bilingual. Where an unkeyed item and UI/status share a source, one LocRes identity
+  cannot carry both variants; resolve the collision and disclose any Chinese-only
+  item-name exception before packaging.
 
 ## Packaging
 
@@ -56,6 +62,12 @@
   overlay. Confirm the expected mount point and all required `Localization/.../*.locres`
   entries. Extract and parse a final locres for representative original-game and mod
   strings when the package includes merged base localization.
+- For a LocRes extension, compare every pre-existing namespace/key, source hash,
+  and value against the game-proven baseline. Check a new name, its description,
+  and a keyed UI entry if supplied. Neither file count nor package size is enough.
+- If the user requires strict external `3+1`, reject archives containing mod-owned
+  containers or `ShooterGame/Mods` paths; verify exactly the one overlay PAK and
+  the matching three baseline runtime files. Keep normal and bilingual separate.
 - If the game reports `Invalid pak file version (...)`, withdraw that candidate and
   rebuild its overlay with a compatible UnrealPak; do not publish a text-only fix.
 - For the default overlay-only archive, validate `ZipFile.testzip()` or equivalent
@@ -75,6 +87,9 @@
 - A package check cannot prove runtime coverage. If a player screenshot exposes an
   untranslated tooltip, add the exact source to the next patch, then expand the audit
   to its related item family and source variants.
+- A successful new-mod test should include both name and description, plus a
+  base-game language regression check. Record the exact tested archive as the next
+  proven baseline; do not generalize one mod's screenshot to every mod.
 - Classify every screenshot/report using
   [runtime-regression-triage.md](runtime-regression-triage.md) before selecting a
   repair. Record the evidence, selected route, rejected routes, and the game-runtime

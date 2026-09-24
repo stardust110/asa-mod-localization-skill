@@ -1,6 +1,6 @@
 ---
 name: asa-mod-localization-release
-description: "Create and validate reusable ARK: Survival Ascended mod localization overlays, with optional fused normal and bilingual baseline packages. Use for ASA mod archive localization, coverage repair, and local release packaging; not for ordinary game translation questions."
+description: "Inventory and translate ASA mod text, choose a game-evidenced LocRes or asset route, and validate normal/bilingual localization packages. Use for mod archive localization, failed in-game coverage, and local 3+1 packaging; not for ordinary game translation questions."
 ---
 
 # ASA Mod Localization Release
@@ -31,6 +31,9 @@ text renders in the game.
 - A screenshot showing English is a concrete regression: locate its complete source
   text including punctuation, RichColor tags, spaces, and line endings. Do not assume
   that translating a short fragment will match Unreal's localization key.
+- When a user reports that a candidate works in-game, record the exact artifact,
+  installed layout, tested surfaces, and remaining exceptions. Make that candidate
+  the next immutable baseline; archive inspection alone never creates a proven baseline.
 - When a working patch and a regressed candidate both exist, read
   [runtime-regression-triage.md](references/runtime-regression-triage.md) before
   changing translations. Run `scripts/compare-pak-layout.ps1` with a
@@ -66,6 +69,12 @@ proper names remain English or `中文（English）` until verified.
 
 ## Choose The Distribution Mode
 
+Honor the user's established installation contract before selecting a build route.
+If the project permits only external `3+1`, do not offer an overlay-only, mod-folder,
+or mod-owned-container package as a substitute. Read
+[proven-locres-workflow.md](references/proven-locres-workflow.md) when adding ASA mod
+names/descriptions to a working patch or when a cooked-asset attempt failed in-game.
+
 ### Overlay-only (default)
 
 - Build and distribute only the current mod localization overlay pak, installation
@@ -84,6 +93,13 @@ proper names remain English or `中文（English）` until verified.
   separately copy the official *bilingual* triplet.
 - Never build both fused variants from the same official `.pak`, or claim a mod-only
   overlay adds bilingual names to base-game content.
+- For a strict external `3+1` project, deliver one `pakchunk9999-Windows_P.pak`
+  alongside the matching `ShooterGame-Windows_P.pak/.ucas/.utoc` in each variant.
+  Install only into `ShooterGame/Content/Paks`; never package `ShooterGame/Mods`
+  or a mod-owned `Content/Paks/Windows` replacement without an explicit policy change.
+- Extend the game-proven LocRes and fallback-path baseline first. Do not replace its
+  triplet or merge whole cooked mod dependency trees merely to add text. A direct
+  asset route is a separate, runtime-gated hypothesis, not the default repair.
 
 ### Variant Isolation Is Mandatory
 
@@ -102,6 +118,10 @@ proper names remain English or `中文（English）` until verified.
 - Preserve every observed fallback entry required by the working baseline. Do not
   reduce `zh / zh-Hans / ja / de` buckets to only `zh / zh-Hans` merely because the
   UI language appears Chinese; ASA mod text can resolve through a fallback bucket.
+- Before building each variant, audit unkeyed exact-source collisions across all
+  included mods. One source/namespace/key cannot hold both a Chinese UI label and
+  a bilingual item label; resolve or explicitly document each exception. Run
+  `scripts/audit-locres-input.py` for CSV inventories using `Path,Key,Source,Translation`.
 - For a bilingual release, read [bilingual-release-gate.md](references/bilingual-release-gate.md).
   It requires separate proof for original-game bilingual text and mod bilingual text;
   passing either surface does not prove the other.
@@ -162,3 +182,7 @@ Do not call the task complete until all applicable checks pass:
 9. A bilingual release includes a completed two-surface runtime matrix: at least one
    original-game display and one mod display. Both must show the expected Chinese
    plus English behavior before the candidate becomes a release.
+10. For a LocRes extension, final LocRes readback confirms representative new names,
+    descriptions, and keyed UI text; an entry-level audit proves every baseline
+    namespace/key, source hash, and translation survives unchanged. The user then
+    verifies the exact candidate in-game before it is called successful.

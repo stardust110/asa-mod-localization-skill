@@ -57,8 +57,9 @@ merge.
 
 ### 3. Direct asset text is not mounted
 
-**Evidence:** the final LocRes contains the expected key, but player-facing direct
-asset fields (for example item display names embedded in cooked assets) remain English.
+**Evidence:** a representative final LocRes entry and in-game check show that the
+actual player-facing text is not resolved through that entry, while a cooked-asset
+field for the same surface is visible in the source mod.
 A proposed replacement container may pass `retoc verify` while the client never loads
 it.
 
@@ -67,6 +68,30 @@ minimal, isolated asset candidate. Keep normal and bilingual LocRes packages int
 
 **Do not:** fuse experimental assets into the root official localization container,
 or claim success from binary field readback alone.
+
+#### Explicitly loaded IoStore mods and keyless FText
+
+Before choosing a repair, inspect the mod's `.uplugin` and the exported text rows.
+An empty `Key` field in an asset export is **not** proof that LocRes cannot resolve
+the string: the game-proven 0.1.53 external package used exact-source and Unreal
+string-CRC candidate keys to translate otherwise keyless exported item names and
+descriptions, including text from explicitly loaded mods. Check the final LocRes
+and a live screenshot before ruling that route out. An IoStore container can also
+mount after a root PAK asset overlay and win for the same package path, even when
+the PAK lists the translated asset and the rebuilt asset reads back correctly.
+
+For a strict `3+1` delivery that is not allowed to install or replace a mod-owned
+container, test an extension of the proven LocRes baseline when source/key evidence
+supports it. After a root cooked-asset overlay has failed in-game, do not issue
+another archive that repeats the same mount strategy or rename its PAK as a
+workaround. Keep the last known-good package intact. If LocRes also fails for the
+exact text, record that surface as unresolved and request approval before any
+isolated alternate-mount experiment.
+
+**Required evidence:** record `ExplicitlyLoaded`, the exported key and exact source,
+the relevant final LocRes identity or asset path, the PAK listing, and a screenshot
+from a game run using the exact candidate. Readback establishes the hypothesis;
+only the screenshot establishes runtime success.
 
 ### 4. Exact source/key mismatch
 
